@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF OCR + Design Document</title>
+<style>
+  /* Full dark theme for app */
+  html, body {
+    margin: 0; padding: 0;
+    height: 100%; width: 100%;
+    background-color: #121212;
+    color: #ddd;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .app-container {
+    background: #1e1e1e;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 1100px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.7);
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+  }
+
+  header {
+    padding: 20px;
+    background: #232323;
+    border-bottom: 1px solid #333;
+    border-radius: 12px 12px 0 0;
+  }
+
+  header h1 {
+    margin: 0;
+    font-weight: 900;
+    font-size: 1.9rem;
+    color: #aad962;
+  }
+
+  header p {
+    margin: 5px 0 0 0;
+    font-weight: 400;
+    color: #bbb;
+  }
+
+  nav.steps {
+    display: flex;
+    background: #282828;
+    border-bottom: 1px solid #333;
+  }
+
+  nav.steps div {
+    flex: 1;
+    padding: 15px 0;
+    text-align: center;
+    font-weight: 600;
+    cursor: pointer;
+    color: #777;
+    border-bottom: 3px solid transparent;
+    user-select: none;
+    transition: all 0.3s ease;
+  }
+
+  nav.steps div.active {
+    color: #aad962;
+    border-bottom-color: #aad962;
+    background: #2f2f2f;
+  }
+
+  nav.steps div:hover:not(.active) {
+    color: #999;
+    background: #2a2a2a;
+  }
+
+  .content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .controls > div {
+    flex: 1;
+    background: #2c2c2c;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+  }
+
+  .controls h3 {
+    margin: 0 0 15px 0;
+    color: #aad962;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background: #445522;
+    color: #d0d0c0;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.25s ease;
+    margin-bottom: 8px;
+  }
+
+  button:last-child {
+    margin-bottom: 0;
+  }
+
+  button:disabled {
+    background: #333;
+    color: #777;
+    cursor: not-allowed;
+  }
+
+  button:hover:not(:disabled) {
+    background: #aad962;
+    color: #121212;
+  }
+
+  .panel {
+    border-radius: 12px;
+    background: #232323;
+    padding: 15px;
+    margin-bottom: 20px;
+    flex-grow: 1;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    overflow-y: auto;
+  }
+
+  .panel-header {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .panel-header h2 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #aad962;
+  }
+
+  .panel-controls {
+    display: flex;
+    gap: 8px;
+  }
+
+  .panel-controls button {
+    width: auto;
+    padding: 6px 12px;
+    font-size: 12px;
+    margin: 0;
+  }
+
+  .status-bar {
+    background: #2c2c2c;
+    padding: 15px 20px;
+    border-radius: 0 0 12px 12px;
+    border-top: 1px solid #333;
+    color: #bbb;
+    font-weight: 600;
+    display: flex;
+    gap: 30px;
+  }
+
+  .status-bar div {
+    flex: 1;
+  }
+
+  .status-label {
+    font-weight: 600;
+    color: #aaa;
+  }
+
+  .status-value {
+    float: right;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .status-value.success {
+    color: #aad962;
+    background: #1a2e0a;
+  }
+
+  .status-value.error {
+    color: #e24c4c;
+    background: #2e1a1a;
+  }
+
+  .status-value.checking {
+    color: #ffb347;
+    background: #2e2a1a;
+  }
+
+  .content-area {
+    display: flex;
+    gap: 20px;
+    height: 100%;
+  }
+
+  .content-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .text-area {
+    background: #121212;
+    color: #ddd;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 13px;
+    flex-grow: 1;
+    padding: 20px;
+    border: none;
+    border-radius: 8px;
+    overflow-y: auto;
+    resize: none;
+    min-height: 200px;
+  }
+
+  .viewer-area {
+    background: #121212;
+    color: #ddd;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 13px;
+    flex-grow: 1;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-y: auto;
+    min-height: 200px;
+  }
+
+  .placeholder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    color: #666;
+    text-align: center;
+  }
+
+  .placeholder h4 {
+    margin: 0 0 10px 0;
+    color: #888;
+  }
+
+  /* Modal Styles */
+  .modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background: #1e1e1e;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 30px rgba(0,0,0,0.9);
+  }
+
+  .modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+  }
+
+  .modal-body {
+    flex: 1;
+    padding: 20px;
+    overflow: hidden;
+  }
+
+  .modal-footer {
+    padding: 20px;
+    border-top: 1px solid #333;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  /* Responsive Design */
+  @media(max-width: 900px) {
+    body {
+      padding: 10px;
+    }
+    
+    .app-container {
+      height: 95vh;
+    }
+    
+    .content-area {
+      flex-direction: column;
+      height: auto;
+    }
+
+    .controls {
+      flex-direction: column;
+    }
+
+    nav.steps {
+      flex-direction: column;
+    }
+    
+    nav.steps div {
+      border-bottom: 1px solid #333;
+    }
+  }
+
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #1e1e1e;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+</style>
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <h1>PDF OCR + Design Document</h1>
+      <p>Extract text from PDFs and generate professional documents</p>
+    </header>
+
+    <nav class="steps">
+      <div class="step active" data-step="1">PDF Upload</div>
+      <div class="step" data-step="2">Design Generation</div>
+      <div class="step" data-step="3">PDF Export</div>
+    </nav>
+
+    <div class="content">
+      <div class="controls">
+        <div>
+          <h3>PDF Upload</h3>
+          <button id="selectFile">Select PDF</button>
+          <button id="processOcr" disabled>Start OCR</button>
+        </div>
+
+        <div>
+          <h3>Design Generation</h3>
+          <button id="generateDesign" disabled>Generate (Gemini)</button>
+          <button id="generateDesignOllama" disabled>Generate (Ollama)</button>
+          <button id="previewLatex" disabled>Preview LaTeX</button>
+        </div>
+
+        <div>
+          <h3>PDF Export</h3>
+          <button id="convertToPdf" disabled>Convert PDF</button>
+          <button id="downloadPdf" disabled>Download PDF</button>
+        </div>
+      </div>
+
+      <div class="content-area">
+        <section class="content-section" id="pdfPreview">
+          <div class="panel">
+            <div class="panel-header">
+              <h2>PDF Preview</h2>
+              <div class="panel-controls">
+                <button id="refreshPdf" disabled>Refresh</button>
+              </div>
+            </div>
+            <div class="viewer-area" id="pdfViewer">
+              <div class="placeholder">
+                <h4>No PDF Selected</h4>
+                <p>Select a PDF file to preview it here</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-section" id="ocrOutput">
+          <div class="panel">
+            <div class="panel-header">
+              <h2>OCR Output</h2>
+              <div class="panel-controls">
+                <button id="copyOcrResults" disabled>Copy</button>
+              </div>
+            </div>
+            <div class="viewer-area" id="ocrResults">
+              <div class="placeholder">
+                <h4>No OCR Results</h4>
+                <p>Process a PDF to see extracted text</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section class="content-section" id="latexPreview" style="display:none;">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>LaTeX Document</h2>
+            <div class="panel-controls">
+              <button id="copyLatex" disabled>Copy</button>
+              <button id="editLatex" disabled>Edit</button>
+              <button id="saveLatex" disabled>Save</button>
+            </div>
+          </div>
+          <textarea id="latexContent" class="text-area" readonly placeholder="LaTeX document will appear here..."></textarea>
+        </div>
+      </section>
+
+      <section class="content-section" id="fileLists" style="display:none;">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Saved Files</h2>
+          </div>
+          <div id="savedFiles" class="viewer-area">No files saved</div>
+        </div>
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Design Documents</h2>
+          </div>
+          <div id="designFilesList" class="viewer-area">No documents saved</div>
+        </div>
+      </section>
+    </div>
+
+    <div class="status-bar">
+      <div><span class="status-label">OCR</span><span id="ocrStatus" class="status-value">Ready</span></div>
+      <div><span class="status-label">Gemini</span><span id="geminiStatus" class="status-value">Ready</span></div>
+      <div><span class="status-label">LaTeX</span><span id="latexStatus" class="status-value">Ready</span></div>
+      <div><span class="status-label">Ollama</span><span id="ollamaStatus" class="status-value">Ready</span></div>
+    </div>
+  </div>
+
+  <!-- LaTeX Editor Modal -->
+  <div class="modal" id="latexModal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Edit LaTeX Document</h3>
+        <button class="modal-close" id="closeModal">×</button>
+      </div>
+      <div class="modal-body">
+        <textarea id="latexEditor" class="text-area" placeholder="Edit your LaTeX document here..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button id="saveLatexChanges">Save Changes</button>
+        <button id="cancelLatexEdit">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script src="renderer.js"></script>
+</body>
+</html>

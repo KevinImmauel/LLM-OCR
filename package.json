@@ -1,0 +1,61 @@
+{
+  "name": "comprehensive-pdf-ocr-design-generator",
+  "version": "2.0.0",
+  "description": "Comprehensive PDF OCR with AI-powered design document generation",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "postinstall": "electron-builder install-app-deps",
+    "clean": "rm -rf node_modules package-lock.json",
+    "reset": "npm run clean && npm install"
+  },
+  "keywords": [
+    "electron",
+    "pdf",
+    "ocr",
+    "mistral",
+    "gemini",
+    "latex",
+    "design-document",
+    "architecture",
+    "comprehensive",
+    "ai-powered"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.0.0"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.15.0",
+    "@mistralai/mistralai": "^1.0.0",
+    "axios": "^1.11.0",
+    "fs-extra": "^11.2.0",
+    "pdfjs-dist": "^4.0.379"
+  },
+  "build": {
+    "appId": "com.yourcompany.pdf-ocr-design-generator",
+    "productName": "Comprehensive PDF OCR + Design Generator",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "linux": {
+      "target": "AppImage",
+      "category": "Office"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg"
+    }
+  }
+}

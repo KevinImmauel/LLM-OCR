@@ -1,0 +1,53 @@
+{
+  "extractedText": "",
+  "markdown": "",
+  "metadata": {
+    "processingTime": "2025-08-31T18:34:36.095Z",
+    "model": "mistral-ocr-latest",
+    "pages": [
+      {
+        "index": 0,
+        "markdown": "# Frontend Development Intern Projects \n\nBelow are two project options. Please review them and choose one that interests you most. Both projects are designed to help you gain practical experience with modern frontend technologies, specifically Vue.js (Quasar Framework is preferred but not mandatory) and Tailwind CSS.\n\n## Project 1: Interactive Recipe Finder Application\n\n## Objective\n\nDevelop a responsive web application that allows users to search for recipes, view recipe details, and manage a list of favorite recipes. The application should be user-friendly and visually appealing.\n\n## Key Features\n\n1. Recipe Search:\n\n- Input field for users to search recipes by name or keywords.\n- Display search results in a grid or list format.\n- Implement a \"Load More\" or pagination feature for large result sets.\n\n2. Recipe Details View:\n\n- Clicking on a recipe in the search results should navigate to a detailed view.\n- Display recipe name, ingredients, instructions, and an image (if available from the API).\n- Allow users to \"favorite\" a recipe from this view.\n\n3. Favorites Management:\n\n- A dedicated section/page to view all favorite recipes.\n- Ability to remove recipes from the favorites list.\n\n4. Responsive Design:\n\n- The application must be fully responsive and provide an excellent user experience on desktop, tablet, and mobile devices.\n\n\n## Technical Requirements\n\n- Framework: Vue.js (Quasar Framework highly preferred for its component library and responsive utilities).\n- Styling: Tailwind CSS for all styling. No custom CSS files unless absolutely necessary for very specific components not covered by Tailwind.\n- API Integration: Utilize a public recipe API (e.g., TheMealDB API, Edamam Recipe Search API, or similar). You will need to sign up for an API key if required.\n- State Management: Basic Vue reactivity or a simple state management pattern (e.g., Vue's provide/inject or a small Pinia/Vuex store for favorites).",
+        "images": [],
+        "dimensions": {
+          "dpi": 200,
+          "height": 2200,
+          "width": 1700
+        }
+      },
+      {
+        "index": 1,
+        "markdown": "- Local Storage: Use browser's local storage to persist favorite recipes.\n- Version Control: Project must be managed using Git.\n\n\n# Deliverables \n\n- A functional web application meeting the above requirements.\n- Clean, well-commented, and organized code.\n- A brief README.md file explaining how to set up and run the project locally.\n\n\n## Project 2: Personal Portfolio Website Builder\n\n## Objective\n\nCreate a simplified web application that allows a user to input their personal and professional details, and then dynamically generates a basic, presentable portfolio website based on that input. This project simulates a \"no-code\" website builder experience.\n\n## Key Features\n\n1. Input Forms:\n\n- Sections for personal information (Name, Title/Role, Short Bio).\n- Sections for contact details (Email, LinkedIn, GitHub, etc.).\n- Sections for skills (e.g., list of technologies).\n- Sections for projects (Project Name, Description, Link, optional Image URL).\n- Sections for experience (Company, Role, Dates, Description).\n\n2. Live Preview/Generation:\n\n- As the user inputs data, the \"portfolio\" should update dynamically in a preview area.\n- A \"Generate\" or \"Export\" button (though actual export functionality is not required, it should simulate the idea).\n\n3. Template Selection (Basic):\n\n- Offer at least two distinct visual themes/layouts for the generated portfolio (e.g., \"Modern Minimal\" and \"Classic Professional\"). The user can switch between these.\n\n4. Responsive Design:\n\n- Both the input forms and the generated portfolio preview must be fully responsive.\n\n\n## Technical Requirements\n\n- Framework: Vue.js (Quasar Framework highly preferred for its form components and responsive utilities).\n- Styling: Tailwind CSS for all styling. Focus on creating distinct visual styles for the",
+        "images": [],
+        "dimensions": {
+          "dpi": 200,
+          "height": 2200,
+          "width": 1700
+        }
+      },
+      {
+        "index": 2,
+        "markdown": "\n\ntwo templates using Tailwind's utility-first approach.\n\n- Component-Based Architecture: Design reusable Vue components for input fields, sections (e.g., SkillCard, ProjectCard), and the overall portfolio layout.\n- State Management: Use Vue reactivity to manage the user's input data and dynamically render the portfolio.\n- No Backend Required: All data will be managed client-side within the application's state.\n- Version Control: Project must be managed using Git.\n\nDeliverables\n\n- A functional web application meeting the above requirements.\n- Clean, well-commented, and organized code.\n- A brief README.md file explaining how to set up and run the project locally.\n\nPlease let us know which project you'd like to tackle! We're here to support you throughout the process.",
+        "images": [],
+        "dimensions": {
+          "dpi": 200,
+          "height": 2200,
+          "width": 1700
+        }
+      }
+    ],
+    "confidence": null
+  },
+  "images": [],
+  "structure": {
+    "headers": [],
+    "tables": [],
+    "lists": []
+  },
+  "savedMetadata": {
+    "originalFilename": "Frontend Development Intern Projects",
+    "savedAt": "2025-08-31T18:34:36.097Z",
+    "version": "2.0",
+    "application": "Comprehensive PDF OCR + Design Generator"
+  }
+}
