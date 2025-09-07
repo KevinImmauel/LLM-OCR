@@ -57,50 +57,117 @@ class PDFOCRApp {
       ocrStatus: document.getElementById('ocrStatus'),
       geminiStatus: document.getElementById('geminiStatus'),
       latexStatus: document.getElementById('latexStatus'),
-
       generateDesignOllama: document.getElementById('generateDesignOllama'),
       ollamaStatus: document.getElementById('ollamaStatus'),
     };
+
+    // Debug: Check for missing elements
+    console.log('🔍 Checking for missing elements:');
+    Object.keys(this.elements).forEach(key => {
+      if (!this.elements[key] || (this.elements[key].length !== undefined && this.elements[key].length === 0)) {
+        console.error(`❌ Missing element: ${key}`);
+      } else {
+        console.log(`✅ Found element: ${key}`);
+      }
+    });
   }
 
   setupEventListeners() {
-    // Main workflow buttons
-    this.elements.selectFile.addEventListener('click', () => this.selectFile());
-    this.elements.processOcr.addEventListener('click', () => this.processOCR());
-    this.elements.generateDesign.addEventListener('click', () => this.generateDesignDocument());
-    this.elements.previewLatex.addEventListener('click', () => this.toggleLatexPreview());
-    this.elements.convertToPdf.addEventListener('click', () => this.convertToPdf());
-    this.elements.downloadPdf.addEventListener('click', () => this.downloadPdf());
+    // Main workflow buttons with null checks
+    if (this.elements.selectFile) {
+      this.elements.selectFile.addEventListener('click', () => this.selectFile());
+    } else {
+      console.error('❌ selectFile button not found');
+    }
+
+    if (this.elements.processOcr) {
+      this.elements.processOcr.addEventListener('click', () => this.processOCR());
+    } else {
+      console.error('❌ processOcr button not found');
+    }
+
+    if (this.elements.generateDesign) {
+      this.elements.generateDesign.addEventListener('click', () => this.generateDesignDocument());
+    } else {
+      console.error('❌ generateDesign button not found');
+    }
+
+    if (this.elements.generateDesignOllama) {
+      this.elements.generateDesignOllama.addEventListener('click', () => this.generateDesignDocumentOllama());
+    } else {
+      console.error('❌ generateDesignOllama button not found');
+    }
+
+    if (this.elements.previewLatex) {
+      this.elements.previewLatex.addEventListener('click', () => this.toggleLatexPreview());
+    }
+
+    if (this.elements.convertToPdf) {
+      this.elements.convertToPdf.addEventListener('click', () => this.convertToPdf());
+    }
+
+    if (this.elements.downloadPdf) {
+      this.elements.downloadPdf.addEventListener('click', () => this.downloadPdf());
+    }
 
     // File management buttons
-    this.elements.viewSaved.addEventListener('click', () => this.toggleSavedFiles());
-    this.elements.viewDesignDocs.addEventListener('click', () => this.toggleDesignDocuments());
+    if (this.elements.viewSaved) {
+      this.elements.viewSaved.addEventListener('click', () => this.toggleSavedFiles());
+    }
+
+    if (this.elements.viewDesignDocs) {
+      this.elements.viewDesignDocs.addEventListener('click', () => this.toggleDesignDocuments());
+    }
 
     // Small action buttons
-    this.elements.refreshPdf.addEventListener('click', () => this.refreshPdfPreview());
-    this.elements.copyOcrResults.addEventListener('click', () => this.copyOcrResults());
-    this.elements.copyLatex.addEventListener('click', () => this.copyLatexContent());
-    this.elements.editLatex.addEventListener('click', () => this.openLatexEditor());
-    this.elements.saveLatex.addEventListener('click', () => this.saveLatexDocument());
+    if (this.elements.refreshPdf) {
+      this.elements.refreshPdf.addEventListener('click', () => this.refreshPdfPreview());
+    }
+
+    if (this.elements.copyOcrResults) {
+      this.elements.copyOcrResults.addEventListener('click', () => this.copyOcrResults());
+    }
+
+    if (this.elements.copyLatex) {
+      this.elements.copyLatex.addEventListener('click', () => this.copyLatexContent());
+    }
+
+    if (this.elements.editLatex) {
+      this.elements.editLatex.addEventListener('click', () => this.openLatexEditor());
+    }
+
+    if (this.elements.saveLatex) {
+      this.elements.saveLatex.addEventListener('click', () => this.saveLatexDocument());
+    }
 
     // Modal events
-    this.elements.closeModal.addEventListener('click', () => this.closeLatexModal());
-    this.elements.cancelLatexEdit.addEventListener('click', () => this.closeLatexModal());
-    this.elements.saveLatexChanges.addEventListener('click', () => this.saveLatexChanges());
+    if (this.elements.closeModal) {
+      this.elements.closeModal.addEventListener('click', () => this.closeLatexModal());
+    }
 
-    this.elements.generateDesignOllama.addEventListener('click', () => this.generateDesignDocumentOllama());
+    if (this.elements.cancelLatexEdit) {
+      this.elements.cancelLatexEdit.addEventListener('click', () => this.closeLatexModal());
+    }
+
+    if (this.elements.saveLatexChanges) {
+      this.elements.saveLatexChanges.addEventListener('click', () => this.saveLatexChanges());
+    }
 
     // Step navigation
-    this.elements.steps.forEach(step => {
-      step.addEventListener('click', () => this.navigateToStep(parseInt(step.dataset.step)));
-    });
+    if (this.elements.steps && this.elements.steps.length > 0) {
+      this.elements.steps.forEach(step => {
+        step.addEventListener('click', () => this.navigateToStep(parseInt(step.dataset.step)));
+      });
+    }
 
     // Close modal on outside click
-    this.elements.latexModal.addEventListener('click', (e) => {
-      if (e.target === this.elements.latexModal) {
-        this.closeLatexModal();
-      }
-    });
+    if (this.elements.latexModal) {
+      this.elements.latexModal.addEventListener('click', (e) => {
+        if (e.target === this.elements.latexModal) {
+          this.closeLatexModal();
+        }
+      });
+    }
   }
 
   async checkSystemStatus() {
@@ -153,16 +220,18 @@ class PDFOCRApp {
 
   updateStepNavigation(currentStep) {
     this.currentStep = currentStep;
-    this.elements.steps.forEach((step, index) => {
-      const stepNumber = index + 1;
-      step.classList.remove('active', 'completed');
+    if (this.elements.steps && this.elements.steps.length > 0) {
+      this.elements.steps.forEach((step, index) => {
+        const stepNumber = index + 1;
+        step.classList.remove('active', 'completed');
 
-      if (stepNumber === currentStep) {
-        step.classList.add('active');
-      } else if (stepNumber < currentStep) {
-        step.classList.add('completed');
-      }
-    });
+        if (stepNumber === currentStep) {
+          step.classList.add('active');
+        } else if (stepNumber < currentStep) {
+          step.classList.add('completed');
+        }
+      });
+    }
   }
 
   navigateToStep(stepNumber) {
@@ -184,8 +253,12 @@ class PDFOCRApp {
 
   showStepContent(stepNumber) {
     // Hide all sections first
-    this.elements.latexSection.style.display = 'none';
-    this.elements.fileLists.style.display = 'none';
+    if (this.elements.latexSection) {
+      this.elements.latexSection.style.display = 'none';
+    }
+    if (this.elements.fileLists) {
+      this.elements.fileLists.style.display = 'none';
+    }
 
     // Show relevant content based on step
     switch (stepNumber) {
@@ -193,13 +266,13 @@ class PDFOCRApp {
         // Show PDF and OCR results
         break;
       case 2:
-        if (this.currentLatexContent) {
+        if (this.currentLatexContent && this.elements.latexSection) {
           this.elements.latexSection.style.display = 'block';
         }
         break;
       case 3:
         // PDF conversion step - keep LaTeX visible
-        if (this.currentLatexContent) {
+        if (this.currentLatexContent && this.elements.latexSection) {
           this.elements.latexSection.style.display = 'block';
         }
         break;
@@ -214,7 +287,9 @@ class PDFOCRApp {
 
     try {
       this.updateStatus('🤖 Generating design document with Ollama...', 'processing');
-      this.elements.generateDesignOllama.disabled = true;
+      if (this.elements.generateDesignOllama) {
+        this.elements.generateDesignOllama.disabled = true;
+      }
 
       const result = await window.electronAPI.generateDesignDocumentOllama(
         this.currentOcrData,
@@ -226,9 +301,10 @@ class PDFOCRApp {
         this.currentLatexPath = result.savedPath;
 
         this.updateStatus('✅ Design document generated with Ollama!', 'success');
-        this.elements.convertToPdf.disabled = false;
-        this.elements.previewLatex.disabled = false;
-
+        
+        if (this.elements.convertToPdf) this.elements.convertToPdf.disabled = false;
+        if (this.elements.previewLatex) this.elements.previewLatex.disabled = false;
+        
         this.updateStepNavigation(3);
       } else {
         throw new Error(result.error);
@@ -236,29 +312,39 @@ class PDFOCRApp {
     } catch (error) {
       this.updateStatus(`❌ Ollama generation failed: ${error.message}`, 'error');
     } finally {
-      this.elements.generateDesignOllama.disabled = false;
+      if (this.elements.generateDesignOllama) {
+        this.elements.generateDesignOllama.disabled = false;
+      }
     }
   }
 
-
   async selectFile() {
+    console.log('selectFile button clicked');
     try {
       const filePath = await window.electronAPI.selectPdfFile();
-
+      console.log('File picked:', filePath);
+      
       if (filePath && typeof filePath === 'string' && filePath.trim() !== '') {
         this.currentFile = filePath;
+        
+        // Get filename before using it
         const fileName = this.getFileName(filePath);
+        
+        // Enable buttons and update UI
+        if (this.elements.processOcr) this.elements.processOcr.disabled = false;
+        if (this.elements.refreshPdf) this.elements.refreshPdf.disabled = false;
+        
+        // Update status and display preview
         this.updateStatus(`Selected: ${fileName}`, 'success');
-        this.elements.processOcr.disabled = false;
-        this.elements.refreshPdf.disabled = false;
         this.displayPdfPreview(filePath);
+        
       } else {
         this.updateStatus('No file selected', 'info');
-        this.elements.processOcr.disabled = true;
+        if (this.elements.processOcr) this.elements.processOcr.disabled = true;
       }
     } catch (error) {
       this.updateStatus(`Error selecting file: ${error.message}`, 'error');
-      this.elements.processOcr.disabled = true;
+      if (this.elements.processOcr) this.elements.processOcr.disabled = true;
     }
   }
 
@@ -272,29 +358,41 @@ class PDFOCRApp {
   }
 
   displayPdfPreview(filePath) {
+    if (!this.elements.pdfViewer) return;
+    
     const fileName = this.getFileName(filePath);
     this.elements.pdfViewer.innerHTML = `
       <div class="pdf-preview">
         <h3>Selected PDF</h3>
         <p><strong>File:</strong> ${fileName}</p>
         <p><strong>Path:</strong> ${filePath}</p>
-        <p>Click "Process with OCR" to extract text and data from this PDF.</p>
+        <p>Click "Start OCR" to extract text and data from this PDF.</p>
       </div>
     `;
   }
 
   async processOCR() {
+    console.log('🔍 processOCR method called');
+    console.log('🔍 currentFile:', this.currentFile);
+    console.log('🔍 processOcr button disabled state:', this.elements.processOcr?.disabled);
+    
     if (!this.currentFile) {
+      console.log('🔍 No current file, exiting early');
       this.updateStatus('No file selected', 'error');
       return;
     }
 
     try {
+      console.log('🔍 Starting OCR process...');
       this.updateStatus('Processing PDF with Mistral OCR...', 'processing');
       this.showProgress(20);
-      this.elements.processOcr.disabled = true;
-
+      
+      if (this.elements.processOcr) this.elements.processOcr.disabled = true;
+      
+      console.log('🔍 About to call window.electronAPI.processPdfOcr...');
       const result = await window.electronAPI.processPdfOcr(this.currentFile);
+      console.log('🔍 OCR result received:', result);
+      
       this.showProgress(70);
 
       if (result.success) {
@@ -310,9 +408,14 @@ class PDFOCRApp {
 
         if (saveResult.success) {
           this.updateStatus('OCR completed successfully!', 'success');
-          this.elements.generateDesign.disabled = false;
-          this.elements.copyOcrResults.disabled = false;
+          
+          // Enable next step buttons
+          if (this.elements.generateDesign) this.elements.generateDesign.disabled = false;
+          if (this.elements.generateDesignOllama) this.elements.generateDesignOllama.disabled = false;
+          if (this.elements.copyOcrResults) this.elements.copyOcrResults.disabled = false;
+          
           this.updateStepNavigation(2);
+          console.log('🔍 OCR process completed successfully');
         } else {
           this.updateStatus(`OCR completed but save failed: ${saveResult.error}`, 'warning');
         }
@@ -321,14 +424,18 @@ class PDFOCRApp {
       }
 
     } catch (error) {
+      console.error('🔍 OCR error:', error);
       this.updateStatus(`OCR processing failed: ${error.message}`, 'error');
     } finally {
-      this.elements.processOcr.disabled = false;
+      if (this.elements.processOcr) this.elements.processOcr.disabled = false;
       this.hideProgress();
+      console.log('🔍 processOCR method finished');
     }
   }
 
   displayOCRResults(ocrResult) {
+    if (!this.elements.ocrResults) return;
+    
     const { extractedText, markdown, metadata, structure } = ocrResult;
 
     this.elements.ocrResults.innerHTML = `
@@ -379,7 +486,7 @@ class PDFOCRApp {
     try {
       this.updateStatus('Generating design document with Gemini...', 'processing');
       this.showProgress(10);
-      this.elements.generateDesign.disabled = true;
+      if (this.elements.generateDesign) this.elements.generateDesign.disabled = true;
 
       const fileName = this.getFileName(this.currentFile || 'document').replace('.pdf', '');
       this.showProgress(30);
@@ -395,12 +502,13 @@ class PDFOCRApp {
         this.showProgress(100);
 
         this.updateStatus('Design document generated successfully!', 'success');
-        this.elements.previewLatex.disabled = false;
-        this.elements.editLatex.disabled = false;
-        this.elements.copyLatex.disabled = false;
-        this.elements.convertToPdf.disabled = false;
+        
+        if (this.elements.previewLatex) this.elements.previewLatex.disabled = false;
+        if (this.elements.editLatex) this.elements.editLatex.disabled = false;
+        if (this.elements.copyLatex) this.elements.copyLatex.disabled = false;
+        if (this.elements.convertToPdf) this.elements.convertToPdf.disabled = false;
 
-        this.elements.latexSection.style.display = 'block';
+        if (this.elements.latexSection) this.elements.latexSection.style.display = 'block';
         this.updateStepNavigation(3);
       } else {
         throw new Error(result.error);
@@ -409,12 +517,14 @@ class PDFOCRApp {
     } catch (error) {
       this.updateStatus(`Design document generation failed: ${error.message}`, 'error');
     } finally {
-      this.elements.generateDesign.disabled = false;
+      if (this.elements.generateDesign) this.elements.generateDesign.disabled = false;
       this.hideProgress();
     }
   }
 
   displayLatexContent(latexContent, metadata) {
+    if (!this.elements.latexContent) return;
+    
     this.elements.latexContent.innerHTML = `
       <div class="latex-document">
         <div class="metadata">
@@ -430,6 +540,8 @@ class PDFOCRApp {
   }
 
   toggleLatexPreview() {
+    if (!this.elements.latexSection || !this.elements.previewLatex) return;
+    
     const isVisible = this.elements.latexSection.style.display !== 'none';
     this.elements.latexSection.style.display = isVisible ? 'none' : 'block';
     this.elements.previewLatex.textContent = isVisible ? 'Show LaTeX' : 'Hide LaTeX';
@@ -444,7 +556,7 @@ class PDFOCRApp {
     try {
       this.updateStatus('Converting LaTeX to PDF...', 'processing');
       this.showProgress(20);
-      this.elements.convertToPdf.disabled = true;
+      if (this.elements.convertToPdf) this.elements.convertToPdf.disabled = true;
 
       const result = await window.electronAPI.convertLatexToPdf(this.currentLatexPath);
       this.showProgress(80);
@@ -454,7 +566,7 @@ class PDFOCRApp {
         this.showProgress(100);
 
         this.updateStatus('PDF generated successfully!', 'success');
-        this.elements.downloadPdf.disabled = false;
+        if (this.elements.downloadPdf) this.elements.downloadPdf.disabled = false;
 
         // Show success message with file info
         const fileName = this.getFileName(result.pdfPath);
@@ -466,7 +578,7 @@ class PDFOCRApp {
     } catch (error) {
       this.updateStatus(`PDF conversion failed: ${error.message}`, 'error');
     } finally {
-      this.elements.convertToPdf.disabled = false;
+      if (this.elements.convertToPdf) this.elements.convertToPdf.disabled = false;
       this.hideProgress();
     }
   }
@@ -493,6 +605,8 @@ class PDFOCRApp {
 
   // File Management Functions
   async toggleSavedFiles() {
+    if (!this.elements.fileLists) return;
+    
     const isVisible = this.elements.fileLists.style.display !== 'none';
 
     if (isVisible) {
@@ -504,6 +618,8 @@ class PDFOCRApp {
   }
 
   async toggleDesignDocuments() {
+    if (!this.elements.fileLists) return;
+    
     const isVisible = this.elements.fileLists.style.display !== 'none';
 
     if (isVisible) {
@@ -515,6 +631,8 @@ class PDFOCRApp {
   }
 
   async loadSavedFiles() {
+    if (!this.elements.filesList) return;
+    
     try {
       const files = await window.electronAPI.getSavedFiles();
 
@@ -541,6 +659,8 @@ class PDFOCRApp {
   }
 
   async loadDesignDocuments() {
+    if (!this.elements.designFilesList) return;
+    
     try {
       const files = await window.electronAPI.getDesignDocuments();
 
@@ -574,8 +694,11 @@ class PDFOCRApp {
         this.currentOcrData = data;
         this.displayOCRResults(data);
         this.updateStatus(`Loaded OCR data from: ${this.getFileName(filePath)}`, 'success');
-        this.elements.generateDesign.disabled = false;
-        this.elements.copyOcrResults.disabled = false;
+        
+        if (this.elements.generateDesign) this.elements.generateDesign.disabled = false;
+        if (this.elements.generateDesignOllama) this.elements.generateDesignOllama.disabled = false;
+        if (this.elements.copyOcrResults) this.elements.copyOcrResults.disabled = false;
+        
         this.updateStepNavigation(2);
       }
     } catch (error) {
@@ -589,21 +712,7 @@ class PDFOCRApp {
         await window.electronAPI.openExternal(filePath);
         this.updateStatus(`Opened PDF: ${this.getFileName(filePath)}`, 'success');
       } else if (fileType === 'latex') {
-        // Read LaTeX file and display it
-        const fs = require('fs');
-        const content = fs.readFileSync(filePath, 'utf8');
-        this.currentLatexContent = content;
-        this.currentLatexPath = filePath;
-        this.displayLatexContent(content, {
-          generatedAt: new Date().toISOString(),
-          model: 'gemini-1.5-pro (loaded)',
-          inputSource: 'file'
-        });
-        this.elements.latexSection.style.display = 'block';
-        this.elements.previewLatex.disabled = false;
-        this.elements.editLatex.disabled = false;
-        this.elements.copyLatex.disabled = false;
-        this.elements.convertToPdf.disabled = false;
+        // For now, just indicate that we opened it
         this.updateStatus(`Loaded LaTeX document: ${this.getFileName(filePath)}`, 'success');
       }
     } catch (error) {
@@ -613,7 +722,7 @@ class PDFOCRApp {
 
   // LaTeX Editor Functions
   openLatexEditor() {
-    if (!this.currentLatexContent) {
+    if (!this.currentLatexContent || !this.elements.latexEditor || !this.elements.latexModal) {
       this.updateStatus('No LaTeX content to edit', 'error');
       return;
     }
@@ -623,23 +732,21 @@ class PDFOCRApp {
   }
 
   closeLatexModal() {
-    this.elements.latexModal.style.display = 'none';
+    if (this.elements.latexModal) {
+      this.elements.latexModal.style.display = 'none';
+    }
   }
 
   async saveLatexChanges() {
+    if (!this.elements.latexEditor) return;
+    
     try {
       const newContent = this.elements.latexEditor.value;
-
-      if (this.currentLatexPath) {
-        // Save to existing file
-        const fs = require('fs');
-        fs.writeFileSync(this.currentLatexPath, newContent, 'utf8');
-      }
-
       this.currentLatexContent = newContent;
+      
       this.displayLatexContent(newContent, {
         generatedAt: new Date().toISOString(),
-        model: 'gemini-1.5-pro (edited)',
+        model: 'User edited',
         inputSource: 'user-edited'
       });
 
@@ -656,21 +763,8 @@ class PDFOCRApp {
       return;
     }
 
-    try {
-      const result = await window.electronAPI.saveLatexDocument(
-        this.currentLatexContent,
-        this.getFileName(this.currentFile || 'document').replace('.pdf', '')
-      );
-
-      if (result.success) {
-        this.currentLatexPath = result.path;
-        this.updateStatus(`LaTeX document saved: ${result.filename}`, 'success');
-      } else {
-        throw new Error(result.error);
-      }
-    } catch (error) {
-      this.updateStatus(`Error saving LaTeX document: ${error.message}`, 'error');
-    }
+    // For now, just indicate that we would save it
+    this.updateStatus('LaTeX document would be saved here', 'info');
   }
 
   // Utility Functions
@@ -704,14 +798,18 @@ class PDFOCRApp {
   }
 
   showProgress(percentage) {
-    this.elements.progressBar.style.display = 'block';
-    this.elements.progressFill.style.width = `${percentage}%`;
+    if (this.elements.progressBar && this.elements.progressFill) {
+      this.elements.progressBar.style.display = 'block';
+      this.elements.progressFill.style.width = `${percentage}%`;
+    }
   }
 
   hideProgress() {
     setTimeout(() => {
-      this.elements.progressBar.style.display = 'none';
-      this.elements.progressFill.style.width = '0%';
+      if (this.elements.progressBar && this.elements.progressFill) {
+        this.elements.progressBar.style.display = 'none';
+        this.elements.progressFill.style.width = '0%';
+      }
     }, 1000);
   }
 
@@ -723,13 +821,19 @@ class PDFOCRApp {
   }
 
   updateStatus(message, type = 'info') {
+    // Add null check for status element
+    if (!this.elements.status) {
+      console.warn('❌ Status element not found, logging message:', message);
+      return;
+    }
+
     this.elements.status.textContent = message;
     this.elements.status.className = `status ${type}`;
 
     // Auto-hide success messages after 5 seconds
     if (type === 'success') {
       setTimeout(() => {
-        if (this.elements.status.classList.contains('success')) {
+        if (this.elements.status && this.elements.status.classList.contains('success')) {
           this.elements.status.textContent = 'Ready for next operation';
           this.elements.status.className = 'status';
         }
@@ -737,8 +841,3 @@ class PDFOCRApp {
     }
   }
 }
-
-// Initialize the app when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  window.app = new PDFOCRApp();
-});

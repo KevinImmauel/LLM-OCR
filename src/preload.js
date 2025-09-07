@@ -2,8 +2,8 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electronAPI', {
   // OCR functionality
-  checkOcrReady: () => ipcRenderer.invoke('check-ocr-ready'),
   selectPdfFile: () => ipcRenderer.invoke('select-pdf-file'),
+  checkOcrReady: () => ipcRenderer.invoke('check-ocr-ready'),
   processPdfOcr: (filePath) => ipcRenderer.invoke('process-pdf-ocr', filePath),
   saveOcrData: (data, filename) => ipcRenderer.invoke('save-ocr-data', data, filename),
   getSavedFiles: () => ipcRenderer.invoke('get-saved-files'),
